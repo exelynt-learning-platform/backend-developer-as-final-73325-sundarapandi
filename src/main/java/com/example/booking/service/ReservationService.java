@@ -50,7 +50,7 @@ public class ReservationService {
         Reservation r = Reservation.builder()
                 .resource(resource).user(user)
                 .startTime(request.startTime()).endTime(request.endTime())
-                .price(request.price()).status(ReservationStatus.PENDING)
+                .price(resource.getPrice()).status(ReservationStatus.PENDING)
                 .createdAt(LocalDateTime.now()).build();
         return toResponse(repository.save(r));
     }
@@ -63,7 +63,7 @@ public class ReservationService {
         r.setResource(resource);
         r.setStartTime(request.startTime());
         r.setEndTime(request.endTime());
-        r.setPrice(request.price());
+        r.setPrice(resource.getPrice());
         r.setStatus(request.status());
         return toResponse(repository.save(r));
     }
@@ -77,7 +77,7 @@ public class ReservationService {
         r.setResource(resource);
         r.setStartTime(request.startTime());
         r.setEndTime(request.endTime());
-        r.setPrice(request.price());
+        r.setPrice(resource.getPrice());
         return toResponse(repository.save(r));
     }
 
@@ -98,6 +98,10 @@ public class ReservationService {
     }
 
     private void validateTimes(LocalDateTime start, LocalDateTime end) {
+        if (start == null || end == null)
+            throw new BadRequestException("startTime and endTime are required");
+        if (start.isBefore(LocalDateTime.now()))
+            throw new BadRequestException("startTime must be in the future");
         if (!start.isBefore(end))
             throw new BadRequestException("startTime must be before endTime");
     }

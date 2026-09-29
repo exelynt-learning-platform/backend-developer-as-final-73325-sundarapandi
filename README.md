@@ -36,7 +36,7 @@ A secure RESTful booking API built with Java 17, Spring Boot, Spring Security, J
 CREATE DATABASE resource_booking;
 ```
 
-Set environment variables or edit `src/main/resources/application.properties`.
+Set these environment variables. Do not commit database passwords or JWT signing secrets to source control.
 
 Windows PowerShell example:
 
@@ -125,18 +125,17 @@ Authorization: Bearer <JWT>
 
 ## Reservation request
 
-There is deliberately no `userId` field:
+There is deliberately no `userId` or `price` field. The authenticated user is taken from the JWT, and the reservation price is taken from the selected resource on the server.
 
 ```json
 {
   "resourceId": 1,
   "startTime": "2026-09-10T10:00:00",
-  "endTime": "2026-09-10T12:00:00",
-  "price": 250.00
+  "endTime": "2026-09-10T12:00:00"
 }
 ```
 
-The server gets the authenticated user from the JWT.
+The server rejects reservations whose start time is in the past and requires `startTime` to be before `endTime`. The server also prevents overlapping bookings.
 
 ## Filtering / pagination / sorting
 
@@ -186,3 +185,29 @@ controller -> service -> repository
                  +-> DTO
                  +-> exception
 ```
+
+
+## Environment variables
+
+Required:
+
+- `DB_USERNAME` - MySQL username
+- `DB_PASSWORD` - MySQL password
+- `JWT_SECRET` - JWT signing secret (at least 32 bytes/characters)
+
+Optional:
+
+- `DB_URL` - defaults to the local `resource_booking` MySQL database
+- `JWT_EXPIRATION_MS` - defaults to `86400000`
+
+Example PowerShell setup:
+
+```powershell
+$env:DB_USERNAME="root"
+$env:DB_PASSWORD="your_mysql_password"
+$env:JWT_SECRET="use-a-long-random-secret-at-least-32-characters"
+mvn clean test
+mvn spring-boot:run
+```
+
+Never commit real values for `DB_PASSWORD` or `JWT_SECRET`.

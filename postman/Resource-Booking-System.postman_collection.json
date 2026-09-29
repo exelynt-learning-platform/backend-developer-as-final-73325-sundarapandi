@@ -34,7 +34,7 @@
           {"key": "Authorization", "value": "Bearer {{token}}"},
           {"key": "Content-Type", "value": "application/json"}
         ],
-        "body": {"mode": "raw", "raw": "{\"resourceId\":1,\"startTime\":\"2026-09-10T10:00:00\",\"endTime\":\"2026-09-10T12:00:00\",\"price\":500.00}"},
+        "body": {"mode": "raw", "raw": "{\"resourceId\":1,\"startTime\":\"2026-09-10T10:00:00\",\"endTime\":\"2026-09-10T12:00:00\"}"},
         "url": {"raw": "{{baseUrl}}/api/reservations", "host": ["{{baseUrl}}"], "path": ["api","reservations"]}
       }
     },
